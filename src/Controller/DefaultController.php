@@ -18,7 +18,7 @@ class DefaultController extends AbstractController
     }
 
     #[Route('new-book')]
-    public function newBook():Response
+    public function newBook(): Response
     {
         $book = new Book();
         $book->setTitle('Harry Potter');
@@ -29,9 +29,9 @@ class DefaultController extends AbstractController
         return new Response();
     }
 
-    #Atribute from PHP 8
+    // Attribute from PHP 8
     #[Route('books')]
-    public function listBooks():Response
+    public function listBooks(): Response
     {
         $books = $this->bookRepository->findAll();
 
