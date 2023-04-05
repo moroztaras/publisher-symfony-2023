@@ -10,10 +10,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class CategoryController extends AbstractController
 {
     public function __construct(
-        private readonly CategoryManager $categoryManager
+        private CategoryManager $categoryManager
     ) {
     }
 
+    // List all categories
     #[Route(path: '/api/book/categories', methods: ['GET'])]
      public function categories(): Response
      {
