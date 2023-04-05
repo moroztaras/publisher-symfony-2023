@@ -75,6 +75,7 @@
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "friendsofphp/php-cs-fixer": "^3.16",
         "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^9.5",
         "symfony/maker-bundle": "^1.48"
     }
 }
