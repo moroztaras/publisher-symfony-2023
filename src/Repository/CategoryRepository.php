@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,5 +23,13 @@ class CategoryRepository extends ServiceEntityRepository
     public function existsById(int $id): bool
     {
         return null !== $this->find($id);
+    }
+
+    /**
+     * @return Category[]
+     */
+    public function findAllSortedByTitle(): array
+    {
+        return $this->findBy([], ['title' => Criteria::ASC]);
     }
 }

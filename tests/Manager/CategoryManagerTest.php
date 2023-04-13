@@ -9,22 +9,26 @@ use App\Manager\CategoryManager;
 use App\Model\CategoryListItem;
 use App\Model\CategoryListResponse;
 use App\Repository\CategoryRepository;
-use Doctrine\Common\Collections\Criteria;
-use PHPUnit\Framework\TestCase;
+use App\Tests\AbstractTestCase;
 
-class CategoryManagerTest extends TestCase
+class CategoryManagerTest extends AbstractTestCase
 {
     // Unit test
     public function testGetCategories(): void
     {
-        // Mock depend CategoryRepository
+        // Create category
+        $category = (new Category())->setTitle('Test')->setSlug('test');
+
+        // Set id for category
+        $this->setEntityId($category, 7);
+
+        // Mock depend on CategoryRepository
         $repository = $this->createMock(CategoryRepository::class);
 
         // Set the behavior to method findBy
         $repository->expects($this->once())
-            ->method('findBy')
-            ->with([], ['title' => Criteria::ASC])
-            ->willReturn([(new Category())->setId(7)->setTitle('Test')->setSlug('test')]); // return value
+            ->method('findAllSortedByTitle')
+            ->willReturn([$category]); // return category
 
         // Real instance
         $categoryManager = new CategoryManager($repository);
