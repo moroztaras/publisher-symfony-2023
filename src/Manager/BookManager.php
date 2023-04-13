@@ -38,6 +38,7 @@ class BookManager
             ->setSlug($book->getSlug())
             ->setAuthors($book->getAuthors())
             ->setMeap($book->isMeap())
+            ->setPublicationAt($book->getPublicationAt()->getTimestamp())
         ;
     }
 }
