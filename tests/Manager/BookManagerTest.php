@@ -26,6 +26,7 @@ class BookManagerTest extends TestCase
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
     }
 
+    // Unit tests
     public function testGetBooksByCategoryNotFound(): void
     {
         // Set behaved method - existsById in categoryRepository
@@ -58,7 +59,7 @@ class BookManagerTest extends TestCase
 
         // Create book manager
         $bookManager = new BookManager($this->bookRepository, $this->categoryRepository);
-        // Expected value
+        // Expected model
         $expected = new BookListResponse([$this->createBookItemModel()]);
 
         $this->assertEquals($expected, $bookManager->getBooksByCategory(130));
