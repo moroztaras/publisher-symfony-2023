@@ -15,6 +15,11 @@
 % symfony serve
 ```
 
+### Run Docker
+```bash
+% docker-compose -f ./docker/docker-compose.yaml up -d
+```
+
 ### Run tests
 ```bash
 % ./vendor/bin/phpunit tests

@@ -18,10 +18,12 @@ class CategoryFixtures extends Fixture
             self::ANDROID_CATEGORY => (new Category())->setTitle('Android')->setSlug('android'),
         ];
 
+        // Add References - link from other fixture on this fixture
         foreach ($categories as $category) {
             $manager->persist($category);
         }
 
+        // The category is not tied to the book
         $manager->persist((new Category())->setTitle('Networking')->setSlug('networking'));
 
         $manager->flush();
