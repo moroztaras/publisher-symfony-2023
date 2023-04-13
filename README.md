@@ -1,5 +1,11 @@
 # Publisher-symfony-2023
 
+### Create project config
+```bash
+% cp .env .env.local
+% cp ./docker/.env.dist ./docker/.env
+```
+
 ### Execute a migration
 ```bash
 % php bin/console doctrine:migrations:migrate
