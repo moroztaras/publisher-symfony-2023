@@ -9,16 +9,31 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)] class Book
 {
-    #[ORM\Id] #[ORM\GeneratedValue] #[ORM\Column(type: 'integer')] private ?int $id;
-    #[ORM\Column(type: 'string', length: 255)] private ?string $title;
-    #[ORM\Column(type: 'string', length: 255)] private string $slug;
-    #[ORM\Column(type: 'string', length: 255, nullable: true)] private ?string $image = null;
-    #[ORM\Column(type: 'simple_array')] private array $authors;
-    #[ORM\Column(type: 'date')] private \DateTimeInterface $publicationAt;
-    #[ORM\Column(type: 'boolean')] private bool $meap = false;
+    #[ORM\Id] #[ORM\GeneratedValue] #[ORM\Column(type: 'integer')]
+    private ?int $id;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $title;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $slug;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image = null;
+
+    #[ORM\Column(type: 'simple_array')]
+    private array $authors;
+
+    #[ORM\Column(type: 'date')]
+    private \DateTimeInterface $publicationAt;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $meap = false;
+
     /**
-         * @var Collection<Category>
-         */ #[ORM\ManyToMany(targetEntity: Category::class)] private Collection $categories;
+     * @var Collection<Category>
+     */
+    #[ORM\ManyToMany(targetEntity: Category::class)] private Collection $categories;
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -28,6 +43,13 @@ use Doctrine\ORM\Mapping as ORM;
        {
            return $this->id;
        }
+
+        public function setId(int $id): self
+        {
+            $this->id = $id;
+
+            return $this;
+        }
 
        public function getTitle(): string
        {
@@ -46,7 +68,7 @@ use Doctrine\ORM\Mapping as ORM;
         return $this->slug;
     }
 
-    public function setSlug(string $slug): Book
+    public function setSlug(string $slug): self
     {
         $this->slug = $slug;
 
@@ -70,7 +92,7 @@ use Doctrine\ORM\Mapping as ORM;
         return $this->authors;
     }
 
-    public function setAuthors(array $authors): Book
+    public function setAuthors(array $authors): self
     {
         $this->authors = $authors;
 
@@ -82,7 +104,7 @@ use Doctrine\ORM\Mapping as ORM;
         return $this->publicationAt;
     }
 
-    public function setPublicationAt(\DateTimeInterface $publicationAt): Book
+    public function setPublicationAt(\DateTimeInterface $publicationAt): self
     {
         $this->publicationAt = $publicationAt;
 
