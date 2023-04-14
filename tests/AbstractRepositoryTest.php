@@ -9,6 +9,7 @@ abstract class AbstractRepositoryTest extends KernelTestCase
 {
     protected ?EntityManagerInterface $em;
 
+    // The method is run before each test.
     protected function setUp(): void
     {
         parent::setUp();
@@ -21,11 +22,14 @@ abstract class AbstractRepositoryTest extends KernelTestCase
         return $this->em->getRepository($entityClass);
     }
 
+    // The method is run, after run each test.
     protected function tearDown(): void
     {
         parent::tearDown();
 
+        // Close entity manager
         $this->em->close();
+        // Set value null for entity manager
         $this->em = null;
     }
 }
