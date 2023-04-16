@@ -25,8 +25,7 @@ class BookRepository extends ServiceEntityRepository
     public function findPublishedBooksByCategoryId(int $id): array
     {
         // Using DQL
-        return $this->_em
-            ->createQuery('SELECT b FROM App\Entity\Book b WHERE :categoryId MEMBER OF b.categories AND b.publicationAt IS NOT NULL')
+        return $this->_em->createQuery('SELECT b FROM App\Entity\Book b WHERE :categoryId MEMBER OF b.categories AND b.publicationAt IS NOT NULL')
             ->setParameter('categoryId', $id)
             ->getResult();
     }

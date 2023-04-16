@@ -28,5 +28,6 @@
 
 ### Run tests
 ```bash
+% php bin/console doctrine:migrations:migrate --no-interaction --env=test
 % ./vendor/bin/phpunit tests
 ```

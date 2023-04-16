@@ -6,7 +6,6 @@ use App\Entity\Category;
 use App\Model\CategoryListItem;
 use App\Model\CategoryListResponse;
 use App\Repository\CategoryRepository;
-use Doctrine\Common\Collections\Criteria;
 
 class CategoryManager
 {
@@ -17,8 +16,8 @@ class CategoryManager
 
     public function getCategories(): CategoryListResponse
     {
-        // Get all categories from repository by title
-        $categories = $this->categoryRepository->findBy([], ['title' => Criteria::ASC]);
+        // Get all categories from repository sort by title
+        $categories = $this->categoryRepository->findAllSortedByTitle();
 
         // The list of entities will map to the list of models.
         $items = array_map(

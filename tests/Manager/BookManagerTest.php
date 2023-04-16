@@ -3,92 +3,87 @@
 namespace App\Tests\Manager;
 
 use App\Entity\Book;
-use App\Entity\Category;
 use App\Exception\CategoryNotFoundException;
 use App\Manager\BookManager;
 use App\Model\BookListItem;
 use App\Model\BookListResponse;
 use App\Repository\BookRepository;
 use App\Repository\CategoryRepository;
+use App\Tests\AbstractTestCase;
 use Doctrine\Common\Collections\ArrayCollection;
-use PHPUnit\Framework\TestCase;
 
-class BookManagerTest extends TestCase
+class BookManagerTest extends AbstractTestCase
 {
-    private BookRepository $bookRepository;
-    private CategoryRepository $categoryRepository;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        // Empty mock without behavior
-        $this->bookRepository = $this->createMock(BookRepository::class);
-        $this->categoryRepository = $this->createMock(CategoryRepository::class);
-    }
-
     // Unit tests
     public function testGetBooksByCategoryNotFound(): void
     {
-        // Set behaved method - existsById in categoryRepository
-        $this->categoryRepository->expects($this->once())
+        // Empty mock for BookRepository
+        $bookRepository = $this->createMock(BookRepository::class);
+        // Empty mock for CategoryRepository
+        $categoryRepository = $this->createMock(CategoryRepository::class);
+
+        // Set behaved method - existsById in CategoryRepository
+        $categoryRepository->expects($this->once())
             ->method('existsById')
             ->with(130)
-            ->willReturn(false);
-
+            ->willThrowException(new CategoryNotFoundException());
+        // We wait exception
         $this->expectException(CategoryNotFoundException::class);
 
         // We call method - getBooksByCategory
-        (new BookManager($this->bookRepository, $this->categoryRepository))->getBooksByCategory(130);
+        (new BookManager($bookRepository, $categoryRepository))->getBooksByCategory(130);
     }
 
     public function testGetBooksByCategory(): void
     {
-        // Mock for bookRepository & categoryRepository
-
-        // Set behaved method - findPublishedBooksByCategoryId in bookRepository
-        $this->bookRepository->expects($this->once())
+        // Empty mock for BookRepository
+        $bookRepository = $this->createMock(BookRepository::class);
+        // Set behaved method - findBooksByCategoryId in BookRepository
+        $bookRepository->expects($this->once())
             ->method('findPublishedBooksByCategoryId')
             ->with(130)
             ->willReturn([$this->createBookEntity()]);
 
-        // Set behaved method - find in categoryRepository
-        $this->categoryRepository->expects($this->once())
-            ->method('find')
-            ->with(130)
-            ->willReturn(new Category());
+        // Empty mock for CategoryRepository
+        $categoryRepository = $this->createMock(CategoryRepository::class);
+        // Set behaved method - existsById in CategoryRepository
+        $categoryRepository->expects($this->once())
+            ->method('existsById')
+            ->willReturn(true);
 
-        // Create book manager
-        $bookManager = new BookManager($this->bookRepository, $this->categoryRepository);
-        // Expected model
+        $bookManager = new BookManager($bookRepository, $categoryRepository);
+        // Expected value
         $expected = new BookListResponse([$this->createBookItemModel()]);
 
+        // Check matching the expected value from the actual value
         $this->assertEquals($expected, $bookManager->getBooksByCategory(130));
     }
 
     private function createBookEntity(): Book
     {
-        return (new Book())
-            ->setId(123)
-            ->setTitle('Test book')
+        $book = (new Book())
+            ->setTitle('Test Book')
             ->setSlug('test-book')
             ->setMeap(false)
             ->setAuthors(['Tester'])
             ->setImage('http://localhost/test.png')
             ->setCategories(new ArrayCollection())
-            ->setPublicationAt(new \DateTime('2020-10-10'))
-        ;
+            ->setPublicationAt(new \DateTime('2020-10-10'));
+
+        $this->setEntityId($book, 123);
+
+        return $book;
     }
 
     private function createBookItemModel(): BookListItem
     {
         return (new BookListItem())
             ->setId(123)
-            ->setTitle('Test book')
+            ->setTitle('Test Book')
             ->setSlug('test-book')
             ->setMeap(false)
             ->setAuthors(['Tester'])
-            ->setImage('http://localhost/test.png')
-            ->setPublicationAt(1602288000)
-        ;
+//            ->setImage('http://localhost/test.png')
+            ->setPublicationAt(1602288000);
     }
 }
