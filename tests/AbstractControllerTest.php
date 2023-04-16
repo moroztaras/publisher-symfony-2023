@@ -15,6 +15,7 @@ class AbstractControllerTest extends WebTestCase
 
     protected ?EntityManagerInterface $em;
 
+    // The method is run before each test.
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,6 +24,7 @@ class AbstractControllerTest extends WebTestCase
         $this->em = self::getContainer()->get('doctrine.orm.entity_manager');
     }
 
+    // The method is run, after run each test.
     protected function tearDown(): void
     {
         parent::tearDown();
