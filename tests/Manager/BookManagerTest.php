@@ -26,7 +26,8 @@ class BookManagerTest extends AbstractTestCase
         $categoryRepository->expects($this->once())
             ->method('existsById')
             ->with(130)
-            ->willThrowException(new CategoryNotFoundException());
+            ->willReturn(false)
+        ;
         // We wait exception
         $this->expectException(CategoryNotFoundException::class);
 
@@ -49,6 +50,7 @@ class BookManagerTest extends AbstractTestCase
         // Set behaved method - existsById in CategoryRepository
         $categoryRepository->expects($this->once())
             ->method('existsById')
+            ->with(130)
             ->willReturn(true);
 
         $bookManager = new BookManager($bookRepository, $categoryRepository);

@@ -20,6 +20,7 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
+    // Check category by id
     public function existsById(int $id): bool
     {
         return null !== $this->find($id);
