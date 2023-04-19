@@ -164,6 +164,40 @@ class ApiExceptionListenerTest extends AbstractTestCase
         $this->assertResponse(Response::HTTP_GATEWAY_TIMEOUT, $responseBody, $event->getResponse());
     }
 
+    // When the method 'resolve' return null, then we have to give 500.
+    public function test500IsDefaultWhenMappingNotFound(): void
+    {
+        // Pending messages and body that we will receive in error response
+        $responseMessage = Response::$statusTexts[Response::HTTP_INTERNAL_SERVER_ERROR];
+        $responseBody = json_encode(['error' => $responseMessage]);
+
+        // Set return value for method of resolve
+        $this->resolver->expects($this->once())
+            ->method('resolve')
+            ->with(InvalidArgumentException::class)
+            ->willReturn(null);
+
+        // Set return value for method of serialize
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->with(new ErrorResponse($responseMessage), JsonEncoder::FORMAT)
+            ->willReturn($responseBody);
+
+        // Create event
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('error message', $this->anything());
+
+        // Create event
+        $event = $this->createEvent(new InvalidArgumentException('error message'));
+
+        // Run event listener
+        $this->runListener($event);
+
+        // Check response
+        $this->assertResponse(Response::HTTP_INTERNAL_SERVER_ERROR, $responseBody, $event->getResponse());
+    }
+
     private function assertResponse(int $expectedStatusCode, string $expectedBody, Response $actualResponse): void
     {
         $this->assertEquals($expectedStatusCode, $actualResponse->getStatusCode());
