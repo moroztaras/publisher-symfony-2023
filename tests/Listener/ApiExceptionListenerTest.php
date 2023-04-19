@@ -64,6 +64,35 @@ class ApiExceptionListenerTest extends AbstractTestCase
         $this->assertResponse(Response::HTTP_NOT_FOUND, $responseBody, $event->getResponse());
     }
 
+    //  Get a message from an exception, not a pre-defined one.
+    public function testNon500MappingWithPublicMessage(): void
+    {
+        $mapping = new ExceptionMapping(Response::HTTP_NOT_FOUND, false, false);
+        $responseMessage = 'Test response message';
+        $responseBody = json_encode(['error' => $responseMessage]);
+
+        // Set return value for method of resolve
+        $this->resolver->expects($this->once())
+            ->method('resolve')
+            ->with(\InvalidArgumentException::class)
+            ->willReturn($mapping);
+
+        // Set return value for method of serialize
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->with(new ErrorResponse($responseMessage), JsonEncoder::FORMAT)
+            ->willReturn($responseBody);
+
+        // Create event
+        $event = $this->createEvent(new \InvalidArgumentException($responseMessage));
+
+        // Run event listener
+        $this->runListener($event);
+
+        // Check response
+        $this->assertResponse(Response::HTTP_NOT_FOUND, $responseBody, $event->getResponse());
+    }
+
     private function assertResponse(int $expectedStatusCode, string $expectedBody, Response $actualResponse): void
     {
         $this->assertEquals($expectedStatusCode, $actualResponse->getStatusCode());
