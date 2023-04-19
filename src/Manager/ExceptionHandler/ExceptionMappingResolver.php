@@ -33,6 +33,7 @@ class ExceptionMappingResolver
         $foundMapping = null;
 
         foreach ($this->mappings as $class => $mapping) {
+            // Mapping wants to find a class or subclass that directly corresponds.
             if ($throwableClass === $class || is_subclass_of($throwableClass, $class)) {
                 $foundMapping = $mapping;
                 break;
