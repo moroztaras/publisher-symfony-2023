@@ -7,6 +7,7 @@ use App\Manager\ExceptionHandler\ExceptionMapping;
 use App\Manager\ExceptionHandler\ExceptionMappingResolver;
 use App\Model\ErrorResponse;
 use App\Tests\AbstractTestCase;
+use Doctrine\Instantiator\Exception\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -85,6 +86,39 @@ class ApiExceptionListenerTest extends AbstractTestCase
 
         // Create event
         $event = $this->createEvent(new \InvalidArgumentException($responseMessage));
+
+        // Run event listener
+        $this->runListener($event);
+
+        // Check response
+        $this->assertResponse(Response::HTTP_NOT_FOUND, $responseBody, $event->getResponse());
+    }
+
+    // Checking that the logger actually triggered.
+    public function testNon500LoggableMappingTriggersLogger(): void
+    {
+        $mapping = new ExceptionMapping(Response::HTTP_NOT_FOUND, false, true);
+        $responseMessage = 'test';
+        $responseBody = json_encode(['error' => $responseMessage]);
+
+        // Set return value for method of resolve
+        $this->resolver->expects($this->once())
+            ->method('resolve')
+            ->with(InvalidArgumentException::class)
+            ->willReturn($mapping);
+
+        // Set return value for method of serialize
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->with(new ErrorResponse($responseMessage), JsonEncoder::FORMAT)
+            ->willReturn($responseBody);
+
+        // Logger settings
+        $this->logger->expects($this->once())
+            ->method('error');
+
+        // Create event
+        $event = $this->createEvent(new InvalidArgumentException('test'));
 
         // Run event listener
         $this->runListener($event);
