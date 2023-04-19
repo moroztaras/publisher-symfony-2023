@@ -198,6 +198,41 @@ class ApiExceptionListenerTest extends AbstractTestCase
         $this->assertResponse(Response::HTTP_INTERNAL_SERVER_ERROR, $responseBody, $event->getResponse());
     }
 
+    // When the debug mode, we show the trace
+    public function testShowTraceWhenDebug(): void
+    {
+        $mapping = ExceptionMapping::fromCode(Response::HTTP_NOT_FOUND);
+        // Pending messages and body that we will receive in error response
+        $responseMessage = Response::$statusTexts[$mapping->getCode()];
+        $responseBody = json_encode(['error' => $responseMessage, 'trace' => 'something']);
+
+        // Set return value for method of resolve
+        $this->resolver->expects($this->once())
+            ->method('resolve')
+            ->with(InvalidArgumentException::class)
+            ->willReturn($mapping);
+
+        // Set return value for method of serialize
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->with(
+                $this->callback(function (ErrorResponse $response) use ($responseMessage) {
+                    return $response->getMessage() == $responseMessage && !empty($response->getDetails()['trace']);
+                }),
+                JsonEncoder::FORMAT
+            )
+            ->willReturn($responseBody);
+
+        // Create event
+        $event = $this->createEvent(new InvalidArgumentException('error message'));
+
+        // Run event listener in debug mode
+        $this->runListener($event, true);
+
+        // Check response
+        $this->assertResponse(Response::HTTP_NOT_FOUND, $responseBody, $event->getResponse());
+    }
+
     private function assertResponse(int $expectedStatusCode, string $expectedBody, Response $actualResponse): void
     {
         $this->assertEquals($expectedStatusCode, $actualResponse->getStatusCode());
