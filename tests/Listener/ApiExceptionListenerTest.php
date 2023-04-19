@@ -69,6 +69,7 @@ class ApiExceptionListenerTest extends AbstractTestCase
     public function testNon500MappingWithPublicMessage(): void
     {
         $mapping = new ExceptionMapping(Response::HTTP_NOT_FOUND, false, false);
+        // Pending messages and body that we will receive in error response
         $responseMessage = 'Test response message';
         $responseBody = json_encode(['error' => $responseMessage]);
 
@@ -98,6 +99,7 @@ class ApiExceptionListenerTest extends AbstractTestCase
     public function testNon500LoggableMappingTriggersLogger(): void
     {
         $mapping = new ExceptionMapping(Response::HTTP_NOT_FOUND, false, true);
+        // Pending messages and body that we will receive in error response
         $responseMessage = 'test';
         $responseBody = json_encode(['error' => $responseMessage]);
 
@@ -118,13 +120,48 @@ class ApiExceptionListenerTest extends AbstractTestCase
             ->method('error');
 
         // Create event
-        $event = $this->createEvent(new InvalidArgumentException('test'));
+        $event = $this->createEvent(new InvalidArgumentException($responseMessage));
 
         // Run event listener
         $this->runListener($event);
 
         // Check response
         $this->assertResponse(Response::HTTP_NOT_FOUND, $responseBody, $event->getResponse());
+    }
+
+    // Checking that the logger triggered when response code is 500.
+    public function test500IsLoggable(): void
+    {
+        $mapping = ExceptionMapping::fromCode(Response::HTTP_GATEWAY_TIMEOUT);
+        // Pending messages and body that we will receive in error response
+        $responseMessage = Response::$statusTexts[$mapping->getCode()];
+        $responseBody = json_encode(['error' => $responseMessage]);
+
+        // Set return value for method of resolve
+        $this->resolver->expects($this->once())
+            ->method('resolve')
+            ->with(InvalidArgumentException::class)
+            ->willReturn($mapping);
+
+        // Set return value for method of serialize
+        $this->serializer->expects($this->once())
+            ->method('serialize')
+            ->with(new ErrorResponse($responseMessage), JsonEncoder::FORMAT)
+            ->willReturn($responseBody);
+
+        // Logger settings with arguments
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('error message', $this->anything());
+
+        // Create event
+        $event = $this->createEvent(new InvalidArgumentException('error message'));
+
+        // Run event listener
+        $this->runListener($event);
+
+        // Check response
+        $this->assertResponse(Response::HTTP_GATEWAY_TIMEOUT, $responseBody, $event->getResponse());
     }
 
     private function assertResponse(int $expectedStatusCode, string $expectedBody, Response $actualResponse): void
