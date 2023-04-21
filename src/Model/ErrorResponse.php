@@ -2,6 +2,8 @@
 
 namespace App\Model;
 
+use OpenApi\Annotations as OA;
+
 class ErrorResponse
 {
     public function __construct(
@@ -15,6 +17,9 @@ class ErrorResponse
         return $this->message;
     }
 
+    /**
+     * @OA\Property(type="object")
+     */
     public function getDetails(): mixed
     {
         return $this->details;
