@@ -7,6 +7,7 @@ use App\Attribute\RequestBody;
 use App\Exception\RequestBodyConvertException;
 use App\Exception\ValidationException;
 use App\Tests\AbstractTestCase;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -94,6 +95,32 @@ class RequestBodyArgumentResolverTest extends AbstractTestCase
 
         // Create resolve
         $this->createResolver()->resolve($request, $meta);
+    }
+
+    public function testResolve(): void
+    {
+        $body = ['test' => true];
+        $encodedBody = json_encode($body);
+
+        $request = new Request([], [], [], [], [], [], $encodedBody);
+        $meta = new ArgumentMetadata('some', \stdClass::class, false, false, null, false, [
+            new RequestBody(),
+        ]);
+
+        $this->serializer->expects($this->once())
+            ->method('deserialize')
+            ->with($encodedBody, \stdClass::class, JsonEncoder::FORMAT)
+            ->willReturn($body);
+
+        $this->validator->expects($this->once())
+            ->method('validate')
+            ->with($body)
+            ->willReturn(new ConstraintViolationList([]));
+
+        $actual = $this->createResolver()->resolve($request, $meta);
+
+        // The body is compared to what the generator will return
+        $this->assertEquals($body, $actual->current());
     }
 
     private function createResolver(): RequestBodyArgumentResolver
