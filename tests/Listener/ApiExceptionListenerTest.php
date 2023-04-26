@@ -5,6 +5,7 @@ namespace App\Tests\Listener;
 use App\Listener\ApiExceptionListener;
 use App\Manager\ExceptionHandler\ExceptionMapping;
 use App\Manager\ExceptionHandler\ExceptionMappingResolver;
+use App\Model\ErrorDebugDetails;
 use App\Model\ErrorResponse;
 use App\Tests\AbstractTestCase;
 use Doctrine\Instantiator\Exception\InvalidArgumentException;
@@ -217,7 +218,11 @@ class ApiExceptionListenerTest extends AbstractTestCase
             ->method('serialize')
             ->with(
                 $this->callback(function (ErrorResponse $response) use ($responseMessage) {
-                    return $response->getMessage() == $responseMessage && !empty($response->getDetails()['trace']);
+                    /** @var ErrorDebugDetails|object $details */
+                    $details = $response->getDetails();
+
+                    return $response->getMessage() == $responseMessage &&
+                        $details instanceof ErrorDebugDetails && !empty($details->getTrace());
                 }),
                 JsonEncoder::FORMAT
             )
