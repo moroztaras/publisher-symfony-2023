@@ -37,6 +37,30 @@ class RequestBodyArgumentResolverTest extends AbstractTestCase
         $this->assertEmpty($this->createResolver()->resolve(new Request(), $meta));
     }
 
+    // When an exception occurs, we should catch it and redirect it to our exception RequestBodyConvertException
+    public function testResolveThrowsWhenDeserialize(): void
+    {
+        // We wait Exception from RequestBodyConvertException
+        $this->expectException(RequestBodyConvertException::class);
+
+        // Create request
+        $request = new Request([], [], [], [], [], [], 'testing content');
+
+        // Create meta
+        $meta = new ArgumentMetadata('some', \stdClass::class, false, false, null, false, [
+            new RequestBody(),
+        ]);
+
+        // Setting deserialize
+        $this->serializer->expects($this->once())
+            ->method('deserialize')
+            ->with('testing content', \stdClass::class, JsonEncoder::FORMAT)
+            ->willThrowException(new \Exception());
+
+        // Create resolve
+        $this->createResolver()->resolve($request, $meta);
+    }
+
     private function createResolver(): RequestBodyArgumentResolver
     {
         return new RequestBodyArgumentResolver($this->serializer, $this->validator);
