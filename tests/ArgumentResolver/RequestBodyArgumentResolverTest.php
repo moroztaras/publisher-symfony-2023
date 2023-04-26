@@ -61,6 +61,41 @@ class RequestBodyArgumentResolverTest extends AbstractTestCase
         $this->createResolver()->resolve($request, $meta);
     }
 
+    // Check Validation return not empty and trigger ValidationException
+    public function testResolveThrowsWhenValidationFails(): void
+    {
+        // We wait Exception from ValidationException
+        $this->expectException(ValidationException::class);
+
+        // Let's mark and encode the body
+        $body = ['test' => true];
+        $encodedBody = json_encode($body);
+
+        // Create request
+        $request = new Request([], [], [], [], [], [], $encodedBody);
+        // Create meta
+        $meta = new ArgumentMetadata('some', \stdClass::class, false, false, null, false, [
+            new RequestBody(),
+        ]);
+
+        // Setting deserialize
+        $this->serializer->expects($this->once())
+            ->method('deserialize')
+            ->with($encodedBody, \stdClass::class, JsonEncoder::FORMAT)
+            ->willReturn($body);
+
+        // Setting validate
+        $this->validator->expects($this->once())
+            ->method('validate')
+            ->with($body)
+            ->willReturn(new ConstraintViolationList([
+                new ConstraintViolation('error', null, [], null, 'some', null),
+            ]));
+
+        // Create resolve
+        $this->createResolver()->resolve($request, $meta);
+    }
+
     private function createResolver(): RequestBodyArgumentResolver
     {
         return new RequestBodyArgumentResolver($this->serializer, $this->validator);
