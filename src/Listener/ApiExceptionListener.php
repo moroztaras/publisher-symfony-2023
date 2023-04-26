@@ -4,6 +4,7 @@ namespace App\Listener;
 
 use App\Manager\ExceptionHandler\ExceptionMapping;
 use App\Manager\ExceptionHandler\ExceptionMappingResolver;
+use App\Model\ErrorDebugDetails;
 use App\Model\ErrorResponse;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,7 +44,7 @@ class ApiExceptionListener
         // Create message
         $message = $mapping->isHidden() ? Response::$statusTexts[$mapping->getCode()] : $throwable->getMessage();
         // Details for debug mode
-        $details = $this->isDebug ? ['trace' => $throwable->getTraceAsString()] : null;
+        $details = $this->isDebug ? new ErrorDebugDetails($throwable->getTraceAsString()) : null;
         // Data response
         $data = $this->serializer->serialize(new ErrorResponse($message, $details), JsonEncoder::FORMAT);
         // Assign a response to the client.
