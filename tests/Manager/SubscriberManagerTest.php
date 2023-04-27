@@ -4,9 +4,9 @@ namespace App\Tests\Manager;
 
 use App\Entity\Subscriber;
 use App\Exception\SubscriberAlreadyExistsException;
+use App\Manager\SubscriberManager;
 use App\Model\SubscriberRequest;
 use App\Repository\SubscriberRepository;
-use App\Manager\SubscriberManager;
 use App\Tests\AbstractTestCase;
 use Doctrine\ORM\EntityManagerInterface;
 

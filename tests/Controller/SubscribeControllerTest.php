@@ -3,7 +3,6 @@
 namespace App\Tests\Controller;
 
 use App\Tests\AbstractControllerTest;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class SubscribeControllerTest extends AbstractControllerTest
