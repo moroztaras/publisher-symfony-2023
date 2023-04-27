@@ -31,6 +31,7 @@ class SubscriberManagerTest extends AbstractTestCase
     {
         $this->expectException(SubscriberAlreadyExistsException::class);
 
+        // Setting the returned value
         $this->repository->expects($this->once())
             ->method('existsByEmail')
             ->with(self::EMAIL)
@@ -41,6 +42,34 @@ class SubscriberManagerTest extends AbstractTestCase
         $request->setEmail(self::EMAIL);
 
         // Create manager
+        (new SubscriberManager($this->repository, $this->em))->subscribe($request);
+    }
+
+    // Test on successful data saving in the database
+    public function testSubscribe(): void
+    {
+        // Setting the returned value for existsByEmail
+        $this->repository->expects($this->once())
+            ->method('existsByEmail')
+            ->with(self::EMAIL)
+            ->willReturn(false);
+
+        $expectedSubscriber = new Subscriber();
+        $expectedSubscriber->setEmail(self::EMAIL);
+
+        // Setting mock for persist
+        $this->em->expects($this->once())
+            ->method('persist')
+            ->with($expectedSubscriber);
+
+        // Setting mock for flush
+        $this->em->expects($this->once())
+            ->method('flush');
+
+        // Create Request
+        $request = new SubscriberRequest();
+        $request->setEmail(self::EMAIL);
+
         (new SubscriberManager($this->repository, $this->em))->subscribe($request);
     }
 }
