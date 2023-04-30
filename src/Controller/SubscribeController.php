@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Attribute\RequestBody;
+use App\Manager\SubscriberManager;
 use App\Model\ErrorResponse;
 use App\Model\SubscriberRequest;
-use App\Manager\SubscriberManager;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
