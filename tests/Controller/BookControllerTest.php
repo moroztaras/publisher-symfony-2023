@@ -5,6 +5,7 @@ namespace App\Tests\Controller;
 use App\Entity\Book;
 use App\Entity\Category;
 use App\Tests\AbstractControllerTest;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -62,7 +63,7 @@ class BookControllerTest extends AbstractControllerTest
             ->setTitle('Test book')
             ->setImage('http://localhost.png')
             ->setMeap(true)
-            ->setPublicationAt(new \DateTime())
+            ->setPublicationAt(new DateTimeImmutable())
             ->setAuthors(['Tester'])
             ->setCategories(new ArrayCollection([$category]))
             ->setSlug('test-book')

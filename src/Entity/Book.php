@@ -24,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
     #[ORM\Column(type: 'simple_array')]
     private array $authors;
 
-    #[ORM\Column(type: 'date')]
+    #[ORM\Column(type: 'date_immutable')]
     private \DateTimeInterface $publicationAt;
 
     #[ORM\Column(type: 'boolean')]

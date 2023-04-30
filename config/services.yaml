@@ -1,6 +1,7 @@
 parameters:
     # setting all exceptions and displaying them
     exceptions:
+        Symfony\Component\HttpKernel\Exception\NotFoundHttpException: { code: 404 }
         App\Exception\CategoryNotFoundException: { code: 404, hidden: false }
         App\Exception\SubscriberAlreadyExistsException: { code: 400, hidden: false }
         App\Exception\RequestBodyConvertException: { code: 400, hidden: false }
