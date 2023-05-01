@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Book;
+use App\Exception\BookNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -28,5 +29,16 @@ class BookRepository extends ServiceEntityRepository
         return $this->_em->createQuery('SELECT b FROM App\Entity\Book b WHERE :categoryId MEMBER OF b.categories AND b.publicationAt IS NOT NULL')
             ->setParameter('categoryId', $id)
             ->getResult();
+    }
+
+    // Checked of the existence of id book
+    public function getById(int $id): Book
+    {
+        $book = $this->find($id);
+        if (null === $book) {
+            throw new BookNotFoundException();
+        }
+
+        return $book;
     }
 }

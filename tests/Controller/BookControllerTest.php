@@ -5,7 +5,6 @@ namespace App\Tests\Controller;
 use App\Entity\Book;
 use App\Entity\Category;
 use App\Tests\AbstractControllerTest;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -39,7 +38,7 @@ class BookControllerTest extends AbstractControllerTest
                             'slug' => ['type' => 'string'],
                             'id' => ['type' => 'integer'],
                             'publicationAt' => ['type' => 'integer'],
-//                            'image' => ['type' => 'string'],
+                            'image' => ['type' => 'string'],
                             'meap' => ['type' => 'boolean'],
                             'authors' => [
                                 'type' => 'array',
@@ -63,7 +62,9 @@ class BookControllerTest extends AbstractControllerTest
             ->setTitle('Test book')
             ->setImage('http://localhost.png')
             ->setMeap(true)
-            ->setPublicationAt(new DateTimeImmutable())
+            ->setIsbn('123321')
+            ->setDescription('test')
+            ->setPublicationAt(new \DateTimeImmutable())
             ->setAuthors(['Tester'])
             ->setCategories(new ArrayCollection([$category]))
             ->setSlug('test-book')
