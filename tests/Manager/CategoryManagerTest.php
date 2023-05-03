@@ -6,7 +6,7 @@ namespace App\Tests\Manager;
 
 use App\Entity\Category;
 use App\Manager\CategoryManager;
-use App\Model\CategoryListItem;
+use App\Model\Category as CategoryModel;
 use App\Model\CategoryListResponse;
 use App\Repository\CategoryRepository;
 use App\Tests\AbstractTestCase;
@@ -34,7 +34,7 @@ class CategoryManagerTest extends AbstractTestCase
         $categoryManager = new CategoryManager($repository);
 
         // Expected value
-        $expected = new CategoryListResponse([new CategoryListItem(7, 'Test', 'test')]);
+        $expected = new CategoryListResponse([new CategoryModel(7, 'Test', 'test')]);
 
         // Check matching the expected value from the actual value
         $this->assertEquals($expected, $categoryManager->getCategories());

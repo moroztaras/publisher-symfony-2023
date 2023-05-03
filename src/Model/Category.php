@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-class CategoryListItem
+class Category
 {
     private int $id;
 

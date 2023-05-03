@@ -15,7 +15,7 @@ class BookRepositoryTest extends AbstractRepositoryTest
     protected function setUp(): void
     {
         parent::setUp();
-        // G et ref on BookRepository
+        // Get ref on BookRepository
         $this->bookRepository = $this->getRepositoryForEntity(Book::class);
     }
 
@@ -40,9 +40,11 @@ class BookRepositoryTest extends AbstractRepositoryTest
     private function createBook(string $title, Category $category): Book
     {
         return (new Book())
-            ->setPublicationAt(new \DateTime())
+            ->setPublicationAt(new \DateTimeImmutable())
             ->setAuthors(['author'])
             ->setMeap(false)
+            ->setDescription('test description')
+            ->setIsbn('12321')
             ->setSlug($title)
             ->setCategories(new ArrayCollection([$category]))
             ->setTitle($title)

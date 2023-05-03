@@ -38,7 +38,7 @@ class BookControllerTest extends AbstractControllerTest
                             'slug' => ['type' => 'string'],
                             'id' => ['type' => 'integer'],
                             'publicationAt' => ['type' => 'integer'],
-//                            'image' => ['type' => 'string'],
+                            'image' => ['type' => 'string'],
                             'meap' => ['type' => 'boolean'],
                             'authors' => [
                                 'type' => 'array',
@@ -62,7 +62,9 @@ class BookControllerTest extends AbstractControllerTest
             ->setTitle('Test book')
             ->setImage('http://localhost.png')
             ->setMeap(true)
-            ->setPublicationAt(new \DateTime())
+            ->setIsbn('123321')
+            ->setDescription('test')
+            ->setPublicationAt(new \DateTimeImmutable())
             ->setAuthors(['Tester'])
             ->setCategories(new ArrayCollection([$category]))
             ->setSlug('test-book')
