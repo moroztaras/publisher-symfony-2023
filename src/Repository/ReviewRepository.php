@@ -2,8 +2,6 @@
 
 namespace App\Repository;
 
-use Traversable;
-use Countable;
 use App\Entity\Review;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -39,7 +37,7 @@ class ReviewRepository extends ServiceEntityRepository
 
     // For get page
     /**
-     * @return Traversable&Countable
+     * @return \Traversable&\Countable
      */
     public function getPageByBookId(int $id, int $offset, int $limit)
     {
