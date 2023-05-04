@@ -59,6 +59,7 @@ use Doctrine\ORM\Mapping as ORM;
     {
         $this->categories = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->formats = new ArrayCollection();
     }
 
     public function getId(): ?int
