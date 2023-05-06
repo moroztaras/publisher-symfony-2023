@@ -25,3 +25,16 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "${POSTGRES_PORT}:5432"
+
+  # Hoverfly
+  hoverfly:
+    container_name: hoverfly
+    image: spectolabs/hoverfly:v1.3.4
+    command:
+      - "-webserver"
+      - "-response-body-files-path=/hoverfly_app/responses"
+      - "-import=/hoverfly_app/simulations/recommend.simulation.json"
+    volumes:
+      - "$PWD/hoverfly:/hoverfly_app:ro"
+    ports:
+      - "8500:8500"
